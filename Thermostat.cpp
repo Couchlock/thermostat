@@ -138,7 +138,7 @@ void Thermostat::climateControl()	//turns on heat/cool based on temperature
 	displayTemp();
 }
 
-void Thermostat::setTime()
+void Thermostat::setTime()	//needs implementation
 {
 
 }
