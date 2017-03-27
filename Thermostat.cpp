@@ -10,12 +10,12 @@ Thermostat::Thermostat(const byte& sp, const byte& cp, const byte& hp, byte tarT
 	_running = false;
 	readSensor();//throw away
 	
-	if (tempType == 0)
+	if (tempType == 0)	//if Celcius
 	{
 		targetTemp = tarTemp;
 		tempBuffer = 1;
 	}
-	else if (tempType == 1)
+	else if (tempType == 1)	//if Farenheit
 	{
 		targetTemp = tarTemp * 1.8 + 32;
 		tempBuffer = 3;
@@ -23,25 +23,25 @@ Thermostat::Thermostat(const byte& sp, const byte& cp, const byte& hp, byte tarT
 }
 	
 
-void Thermostat::readSensor()
+void Thermostat::readSensor()	//takes a reading from the sensor and converts it to degrees based on tempType
 {
 	const byte Size = 100;
 	unsigned short rawRead[Size];
 	unsigned short avgRead = 0;
-	for (byte i = 0; i < Size; i++)
+	for (byte i = 0; i < Size; i++)	//reads the sensor Size times to get an average reading for better consistency
 	{
 		rawRead[i] = analogRead(SENSOR_PIN);
 		avgRead += rawRead[i];
 	}
 	avgRead /= Size;
-	float voltage = (avgRead * AREF_SIGNAL / 1024) - 0.495; //Ov * Iv / range of sensor) - (voltage offset of tmp36)
+	float voltage = (avgRead * AREF_SIGNAL / 1024) - 0.495; //Ov * Iv / range of sensor) - (voltage offset of tmp36()
 	if (tempType == 0)	//if C
 		currentTemp = voltage * 100;
 	else if (tempType == 1)	// if F
 		currentTemp = (byte)((voltage * 100) * 1.8 + 32) + 0.5;
 }
 
-bool Thermostat::pollTimer(double& lM)
+bool Thermostat::pollTimer(double& lM)	//we only want to get an updated temp every so often, determined by poll
 {
 	if (millis() - lM >= poll)
 	{
@@ -51,7 +51,7 @@ bool Thermostat::pollTimer(double& lM)
 	return false;
 }
 
-void Thermostat::setRunState()
+void Thermostat::setRunState()	//allows us to set the thermostat on or off
 {
 	if (runState == false)
 		runState = true;
@@ -82,7 +82,7 @@ void Thermostat::displayTemp()	//replace this with code for an actual display
 		Serial.println("OFF");
 }
 
-void Thermostat::changeTargetTemp(int d)
+void Thermostat::changeTargetTemp(int d)	//adjusts target temp up or down
 {
 	if (runState == true)
 	{
@@ -96,7 +96,7 @@ void Thermostat::changeTargetTemp(int d)
 	climateControl();
 }
 
-void Thermostat::climateControl()
+void Thermostat::climateControl()	//turns on heat/cool based on temperature
 {
 	if (runState == false)
 	{
